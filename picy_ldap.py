@@ -14,7 +14,8 @@ class ICAdsLdap(object):
             print 'something empty'
             return False
 
-        dn = ldap.filter.escape_filter_chars(user, 1)
+        dn = "{}@ic.ac.uk".format(ldap.filter.escape_filter_chars(user, 1))
+        
         try:
             self.conn.bind_s(dn, passw)
             return True
@@ -97,3 +98,5 @@ class ICUnixLdap(object):
 
     def __del__(self):
         self.close()
+
+
