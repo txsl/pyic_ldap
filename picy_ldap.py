@@ -3,6 +3,29 @@ import sys
 import ldap, ldap.filter
 
 
+class ICAdsLdap(object):
+
+    def __init__(self):
+        self.conn = ldap.initialize('ldaps://icadsldap.ic.ac.uk')
+
+    def auth_bind(self, user, passw):
+
+        if not user or not passw:
+            print 'something empty'
+            return False
+
+        dn = ldap.filter.escape_filter_chars(user, 1)
+        try:
+            self.conn.bind_s(dn, passw)
+            return True
+        except ldap.INVALID_CREDENTIALS:
+            # Bad user/pass
+            return False
+
+        # Although we really shouldn't reach here
+        return False
+
+
 class ICUnixLdap(object):
 
     def __init__(self):
@@ -74,5 +97,3 @@ class ICUnixLdap(object):
 
     def __del__(self):
         self.close()
-
-
