@@ -1,9 +1,9 @@
 import sys
-import ldap
-from ldif import LDIFParser
+
+import ldap, ldap.filter
 
 
-class IC_Ldap(object):
+class ICUnixLdap(object):
 
     def __init__(self):
         self.conn = ldap.initialize('ldaps://unixldap.cc.ic.ac.uk')
@@ -17,7 +17,8 @@ class IC_Ldap(object):
             print 'something empty'
             return False
 
-        dn = 'uid=%s,ou=People,ou=everyone,dc=ic,dc=ac,dc=uk' % user
+        # Filter out any bad characters
+        dn = 'uid=%s,ou=People,ou=everyone,dc=ic,dc=ac,dc=uk' % ldap.filter.escape_filter_chars(user, 1)
 
         try:
             # Bind OK
@@ -36,8 +37,13 @@ class IC_Ldap(object):
         if isinstance(user, str):
             user = [user]
 
+        # Filter out any bad characters
+        filt_user = []
+        for i in user:
+            filt_user.append(ldap.filter.escape_filter_chars(i, 1))
+
         # Generate the OR list of users to filter by
-        joined = ")(uid=".join(user)
+        joined = ")(uid=".join(filt_user)
         filt = "(|(uid={}))".format(joined)
 
         basedn = "ou=People,ou=shibboleth,dc=ic,dc=ac,dc=uk"
@@ -68,3 +74,5 @@ class IC_Ldap(object):
 
     def __del__(self):
         self.close()
+
+
