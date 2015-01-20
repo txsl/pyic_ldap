@@ -79,7 +79,7 @@ class ICUnixLdap(object):
         output = []
 
         for dn, entry in query_result:
-            print dn, entry, 'hello'
+
             # Filter to the values we want to keep
             entry = {key: entry[key] for key in
                                 ['uid', 'mail', 'sn', 'givenName', 'displayName']}
@@ -102,4 +102,6 @@ class ICUnixLdap(object):
     def __del__(self):
         self.close()
 
-
+u = ICUnixLdap()
+u.bind()
+print u.get_details('txl11', False)
