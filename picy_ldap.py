@@ -1,4 +1,4 @@
-import sys
+import logging
 
 import ldap, ldap.filter
 
@@ -7,6 +7,7 @@ class ICAdsLdap(object):
 
     def __init__(self):
         self.conn = ldap.initialize('ldaps://icadsldap.ic.ac.uk')
+        logging.warning('ICADS LDAP link not fully developed or tested yet. Use with caution!')
 
     def auth_bind(self, user, passw):
 
@@ -53,6 +54,7 @@ class ICUnixLdap(object):
             return False
 
         # Although we really shouldn't reach here
+        logging.warning("ICUnixLdap auth_bind with username {0} failed to complete successfully, but was not caught as invalid credentials".format(user))
         return False
 
     def get_details(self, user, return_list=True):
@@ -77,6 +79,7 @@ class ICUnixLdap(object):
         output = []
 
         for dn, entry in query_result:
+            print dn, entry, 'hello'
             # Filter to the values we want to keep
             entry = {key: entry[key] for key in
                                 ['uid', 'mail', 'sn', 'givenName', 'displayName']}
