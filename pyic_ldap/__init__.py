@@ -102,6 +102,4 @@ class ICUnixLdap(object):
     def __del__(self):
         self.close()
 
-u = ICUnixLdap()
-u.bind()
-print u.get_details('txl11', False)
+
