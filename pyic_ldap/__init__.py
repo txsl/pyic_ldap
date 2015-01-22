@@ -63,30 +63,27 @@ class ICUnixLdap(object):
         if isinstance(user, str):
             user = [user]
 
-        # Filter out any bad characters
-        filt_user = []
-        for i in user:
-            filt_user.append(ldap.filter.escape_filter_chars(i, 1))
-
-        # Generate the OR list of users to filter by
-        joined = ")(uid=".join(filt_user)
-        filt = "(|(uid={}))".format(joined)
-
         basedn = "ou=People,ou=shibboleth,dc=ic,dc=ac,dc=uk"
 
-        query_result = self.conn.search_s(basedn, ldap.SCOPE_SUBTREE, filt)
-
+        # Query for all users, one by one
         output = []
+        for i in user:
+            filt_uname = "uid={0}".format(ldap.filter.escape_filter_chars(i, 1))
 
-        for dn, entry in query_result:
+            query_result = self.conn.search_s(basedn, ldap.SCOPE_SUBTREE, filt_uname)
+
+            for dn, entry in query_result:
 
             # Filter to the values we want to keep
-            entry = {key: entry[key] for key in
-                                ['uid', 'mail', 'sn', 'givenName', 'displayName']}
+                entry = {key: entry[key] for key in
+                                    ['uid', 'mail', 'sn', 'givenName', 'displayName']}
 
             # We want to return strings not a list of one item (results should be one item!)
-            for key, item in entry.iteritems():
-                entry[key] = item[0]
+                for key, item in entry.iteritems():
+                    entry[key] = item[0]
+
+            if not query_result:
+                entry = None
 
             # If we are returning a list (default)
             if return_list:
@@ -101,5 +98,3 @@ class ICUnixLdap(object):
 
     def __del__(self):
         self.close()
-
-
