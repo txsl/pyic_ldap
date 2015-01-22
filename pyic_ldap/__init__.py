@@ -60,7 +60,7 @@ class ICUnixLdap(object):
     def get_details(self, user, return_list=True):
 
         # If one username (and a string) is put in a list
-        if isinstance(user, str):
+        if not isinstance(user, list):
             user = [user]
 
         basedn = "ou=People,ou=shibboleth,dc=ic,dc=ac,dc=uk"
@@ -98,3 +98,5 @@ class ICUnixLdap(object):
 
     def __del__(self):
         self.close()
+
+
