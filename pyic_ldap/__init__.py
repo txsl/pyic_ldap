@@ -68,7 +68,7 @@ class ICUnixLdap(object):
         # Query for all users, one by one
         output = []
         for i in user:
-            filt_uname = "uid={0}".format(ldap.filter.escape_filter_chars(i, 1))
+            filt_uname = "uid={0}".format(ldap.filter.escape_filter_chars(str(i), 1))
 
             query_result = self.conn.search_s(basedn, ldap.SCOPE_SUBTREE, filt_uname)
 
